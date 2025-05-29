@@ -3,7 +3,7 @@ name: Deploy Frontend to VPS
 on:
   push:
     branches:
-      - master
+      - main
 
 jobs:
   deploy:
@@ -38,7 +38,7 @@ jobs:
             cd /home/woody97442/htdocs/rest.wbpro.fr
             git config --global --add safe.directory /home/woody97442/htdocs/rest.wbpro.fr
             git reset --hard
-            git pull origin master
+            git pull origin main
 
       - name: 📦 Install dependencies on VPS
         uses: appleboy/ssh-action@v0.1.10
