@@ -81,4 +81,4 @@ jobs:
             nvm use 24.1.0
             cd /home/woody97442/htdocs/rest.wbpro.fr
             /root/.nvm/versions/node/v24.1.0/bin/pm2 delete rest || true
-            /root/.nvm/versions/node/v24.1.0/bin/pm2 start ecosystem.config.js --only rest
+            /root/.nvm/versions/node/v24.1.0/bin/pm2 start ecosystem.config.cjs --only rest
