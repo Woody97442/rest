@@ -1,0 +1,94 @@
+name: Deploy Frontend to VPS
+
+on:
+  push:
+    branches:
+      - master
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: 🛒 Checkout repository
+        uses: actions/checkout@v4
+
+      - name: 🛠️ Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '24.x'
+
+      - name: 📦 Install dependencies
+        run: npm install
+
+      - name: 🏗️ Build frontend
+        run: npm run build
+
+      - name: 📤 Connect to VPS and pull latest code
+        uses: appleboy/ssh-action@v0.1.10
+        with:
+          host: ${{ secrets.VPS_HOST }}
+          username: ${{ secrets.VPS_USER }}
+          key: ${{ secrets.VPS_SSH_KEY }}
+          port: 22
+          script: |
+            export NVM_DIR="$HOME/.nvm"
+            [ -s "$NVM_DIR/nvm.sh" ] && \. "$NVM_DIR/nvm.sh"
+            nvm use 24.1.0
+            cd /home/woody97442/htdocs/rest.wbpro.fr
+            git config --global --add safe.directory /home/woody97442/htdocs/rest.wbpro.fr
+            git reset --hard
+            git pull origin master
+
+      - name: 📦 Install dependencies on VPS
+        uses: appleboy/ssh-action@v0.1.10
+        with:
+          host: ${{ secrets.VPS_HOST }}
+          username: ${{ secrets.VPS_USER }}
+          key: ${{ secrets.VPS_SSH_KEY }}
+          port: 22
+          script: |
+            export NVM_DIR="$HOME/.nvm"
+            [ -s "$NVM_DIR/nvm.sh" ] && \. "$NVM_DIR/nvm.sh"
+            nvm use 24.1.0
+            cd /home/woody97442/htdocs/rest.wbpro.fr
+            npm install
+
+      - name: 🏗️ Build frontend on VPS
+        uses: appleboy/ssh-action@v0.1.10
+        with:
+          host: ${{ secrets.VPS_HOST }}
+          username: ${{ secrets.VPS_USER }}
+          key: ${{ secrets.VPS_SSH_KEY }}
+          port: 22
+          script: |
+            export NVM_DIR="$HOME/.nvm"
+            [ -s "$NVM_DIR/nvm.sh" ] && \. "$NVM_DIR/nvm.sh"
+            nvm use 24.1.0
+            cd /home/woody97442/htdocs/rest.wbpro.fr
+            npm run build
+
+      - name: 🚀 Restart PM2 (port 3667)
+        uses: appleboy/ssh-action@v0.1.10
+        with:
+          host: ${{ secrets.VPS_HOST }}
+          username: ${{ secrets.VPS_USER }}
+          key: ${{ secrets.VPS_SSH_KEY }}
+          port: 22
+          script: |
+            export NVM_DIR="$HOME/.nvm"
+            [ -s "$NVM_DIR/nvm.sh" ] && \. "$NVM_DIR/nvm.sh"
+            nvm use 24.1.0
+            cd /home/woody97442/htdocs/rest.wbpro.fr
+            /root/.nvm/versions/node/v24.1.0/bin/pm2 delete rest || true
+            /root/.nvm/versions/node/v24.1.0/bin/pm2 start ecosystem.config.js --only rest
+
+      - name: 🔄 Update PM2 in-memory version
+        uses: appleboy/ssh-action@v0.1.10
+        with:
+          host: ${{ secrets.VPS_HOST }}
+          username: ${{ secrets.VPS_USER }}
+          key: ${{ secrets.VPS_SSH_KEY }}
+          port: 22
+          script: |
+            /root/.nvm/versions/node/v24.1.0/bin/pm2 update
