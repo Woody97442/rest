@@ -14,7 +14,7 @@ export const Header = () => {
           to="/discount"
           title="Promo">
           <span className="text-accent font-medium hidden sm:inline">
-            🔥 Les Bon Plan
+            🔥 Les Bons Plan
           </span>
         </Link>
       </div>
