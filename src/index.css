@@ -3,9 +3,56 @@
 @tailwind utilities;
 
 @theme {
-  --color-primary: #8b004b;
+  --color-primary: #ffa500;
   --color-soft: #ffffff;
-  --color-dark: #1f1b24;
+  --color-dark: #292929;
   --color-light-pink: #f5c6cb;
   --font-sans: "Raleway", sans-serif;
+}
+
+.transition-circle {
+  position: fixed;
+  top: 50%;
+  left: 50%;
+  width: 200px;
+  height: 200px;
+  background: radial-gradient(circle, #6366f1, #9333ea);
+  border-radius: 9999px;
+  transform: translate(-50%, -50%) scale(0);
+  z-index: 9999;
+  opacity: 1;
+}
+
+.animate-exit {
+  animation: expandCircle 0.8s ease-out forwards;
+}
+
+.animate-enter {
+  animation: shrinkCircle 0.8s ease-in forwards;
+}
+
+@keyframes expandCircle {
+  0% {
+    transform: translate(-50%, -50%) scale(0);
+    opacity: 1;
+  }
+  100% {
+    transform: translate(-50%, -50%) scale(50);
+    opacity: 1;
+  }
+}
+
+@keyframes shrinkCircle {
+  0% {
+    transform: translate(-50%, -50%) scale(20);
+    opacity: 1;
+  }
+  100% {
+    transform: translate(-50%, -50%) scale(0);
+    opacity: 1;
+  }
+}
+
+.fixed span {
+  text-shadow: 0 0 10px rgba(0, 0, 0, 0.5);
 }

@@ -1,11 +1,15 @@
 import { useState, useRef, useEffect } from "react";
-import { ShoppingCart, UserPlus, LogIn, LogOut } from "lucide-react";
-import { Link } from "react-router-dom";
+import { ShoppingCart, UserPlus, LogIn, LogOut, User } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
 import { ParseJwt } from "@/tools/tools";
-const apiBaseUrl = import.meta.env.VITE_API_BASE_URL;
+import { useRedirect } from "@/context/RedirectContext";
+const apiBaseUrl =
+  import.meta.env.VITE_MODE === "development"
+    ? "http://localhost:3000/api"
+    : import.meta.env.VITE_API_BASE_URL;
 
 export const Auth = () => {
+  const { redirectTo } = useRedirect();
   const [showLoginForm, setShowLoginForm] = useState(false);
   const [showSignupForm, setShowSignupForm] = useState(false);
 
@@ -119,17 +123,21 @@ export const Auth = () => {
       <div className="flex items-center space-x-4">
         {user ? (
           <div className="flex items-center space-x-6">
-            <span className="text-lg text-white">
-              <Link
-                to="/account"
-                title="account">
-                {user.name || user.email}
-              </Link>
+            <span className=" cursor-pointer flex flex-col items-center text-white">
+              <button
+                onClick={() => redirectTo("/account")}
+                className="flex flex-col items-center">
+                <User className="w-6 h-6 mb-1" />
+                <span className="text-sm">{user.name || user.email}</span>
+              </button>
             </span>
             <button
               onClick={handleLogout}
               title="Déconnexion">
-              <LogOut className="cursor-pointer w-6 h-6 hover:text-red-500" />
+              <div className="flex items-center space-y-2 flex-col">
+                <LogOut className="cursor-pointer w-6 h-6 hover:text-red-500" />
+                <span className="text-xs">Déconnexion</span>
+              </div>
             </button>
           </div>
         ) : (
@@ -140,7 +148,10 @@ export const Auth = () => {
                 setShowSignupForm(false);
               }}
               title="Connexion">
-              <LogIn className="cursor-pointer w-6 h-6 hover:text-accent" />
+              <div className="flex items-center space-y-2 flex-col">
+                <LogIn className="cursor-pointer w-6 h-6 hover:text-accent" />
+                <span className="text-xs">Connexion</span>
+              </div>
             </button>
 
             <button
@@ -149,16 +160,22 @@ export const Auth = () => {
                 setShowLoginForm(false);
               }}
               title="Inscription">
-              <UserPlus className="cursor-pointer w-6 h-6 hover:text-accent" />
+              <div className="flex items-center space-y-2 flex-col">
+                <UserPlus className="cursor-pointer w-6 h-6 hover:text-accent" />
+                <span className="text-xs">Inscription</span>
+              </div>
             </button>
           </>
         )}
 
-        <Link
-          to="/cart"
-          title="Panier">
-          <ShoppingCart className="w-6 h-6 hover:text-accent" />
-        </Link>
+        <button
+          onClick={() => redirectTo("/cart")}
+          className="hover:scale-110 cursor-pointer w-6 h-6 flex items-center justify-center mx-2">
+          <div className="flex items-center space-y-2 flex-col">
+            <ShoppingCart className="w-6 h-6 hover:text-accent" />
+            <span className="text-xs">Panier</span>
+          </div>
+        </button>
       </div>
 
       {/* Formulaire Inscription */}
@@ -214,7 +231,7 @@ export const Auth = () => {
             <button
               onClick={handleSignupSubmit}
               className="cursor-pointer bg-primary text-white px-4 py-2 rounded-md w-full hover:bg-opacity-90 transition mb-2">
-              OK
+              Valider
             </button>
           </motion.div>
         )}
@@ -260,7 +277,7 @@ export const Auth = () => {
             <button
               onClick={handleLoginSubmit}
               className="cursor-pointer bg-primary text-white px-4 py-2 rounded-md w-full hover:bg-primary-90 transition mb-2">
-              OK
+              Valider
             </button>
           </motion.div>
         )}

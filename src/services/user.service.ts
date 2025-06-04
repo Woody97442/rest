@@ -1,5 +1,7 @@
 import axios from "axios";
-const apiBaseUrl = import.meta.env.VITE_API_BASE_URL;
+const apiBaseUrl = import.meta.env.VITE_MODE === "development"
+    ? "http://localhost:3000/api"
+    : import.meta.env.VITE_API_BASE_URL;
 export const UserService = {
     getUserProfile: async (token: string): Promise<{ success: boolean; data: any, message?: string }> => {
         try {
