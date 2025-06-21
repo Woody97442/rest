@@ -53,7 +53,7 @@ export const CartService = {
                 const cartItems: CartItem[] = cart.items.map((item: any) => ({
                     itemId: item.id,
                     product: parseProductValue(item.product),
-                    days: item.quantity,
+                    quantity: item.quantity,
                     unitPrice: item.unitPrice
                 }));
 

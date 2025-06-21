@@ -4,6 +4,7 @@ import { CartPage } from "@/pages/CartPage";
 import AccountPage from "@/pages/AccountPage";
 import { ValideOrderPage } from "./pages/ValidOrderPage";
 import { OrderCommandePage } from "./pages/OrderCommandePage";
+import CategoryPage from "./pages/CategoryPage";
 
 const App = () => {
   return (
@@ -27,6 +28,10 @@ const App = () => {
       <Route
         path="/ordercommande"
         element={<OrderCommandePage />}
+      />
+      <Route
+        path="/products/category/:slug"
+        element={<CategoryPage />}
       />
     </Routes>
   );

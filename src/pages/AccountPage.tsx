@@ -152,7 +152,6 @@ const AccountPage = () => {
 
   return (
     <div className="bg-soft min-h-screen text-dark font-sans">
-      <Header />
       <div className="flex bg-dark">
         {/* Sidebar */}
         <div className="w-64 bg-dark text-white p-6 h-screen">
@@ -326,7 +325,6 @@ const AccountPage = () => {
           )}
         </div>
       </div>
-      <Footer />
     </div>
   );
 };

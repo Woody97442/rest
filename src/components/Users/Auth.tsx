@@ -116,6 +116,7 @@ export const Auth = () => {
   const handleLogout = () => {
     localStorage.removeItem("token");
     setUser(null);
+    window.location.pathname = "/";
   };
 
   return (
@@ -123,19 +124,22 @@ export const Auth = () => {
       <div className="flex items-center space-x-4">
         {user ? (
           <div className="flex items-center space-x-6">
-            <span className=" cursor-pointer flex flex-col items-center text-white">
+            <span className="  flex flex-col items-center text-white">
               <button
                 onClick={() => redirectTo("/account")}
-                className="flex flex-col items-center">
-                <User className="w-6 h-6 mb-1" />
-                <span className="text-sm">{user.name || user.email}</span>
+                className="hover:scale-110 flex flex-col items-center">
+                <div className="flex items-center space-y-2 flex-col">
+                  <User className="w-6 h-6 mb-1 cursor-pointer hover:text-primary" />
+                  <span className="text-sm">{user.name || user.email}</span>
+                </div>
               </button>
             </span>
             <button
               onClick={handleLogout}
-              title="Déconnexion">
+              title="Déconnexion"
+              className="hover:scale-110">
               <div className="flex items-center space-y-2 flex-col">
-                <LogOut className="cursor-pointer w-6 h-6 hover:text-red-500" />
+                <LogOut className="cursor-pointer w-6 h-6 hover:text-primary" />
                 <span className="text-xs">Déconnexion</span>
               </div>
             </button>
@@ -147,9 +151,10 @@ export const Auth = () => {
                 setShowLoginForm((prev) => !prev);
                 setShowSignupForm(false);
               }}
+              className="hover:scale-110"
               title="Connexion">
               <div className="flex items-center space-y-2 flex-col">
-                <LogIn className="cursor-pointer w-6 h-6 hover:text-accent" />
+                <LogIn className="cursor-pointer w-6 h-6 hover:text-primary" />
                 <span className="text-xs">Connexion</span>
               </div>
             </button>
@@ -159,9 +164,10 @@ export const Auth = () => {
                 setShowSignupForm((prev) => !prev);
                 setShowLoginForm(false);
               }}
-              title="Inscription">
+              title="Inscription"
+              className="hover:scale-110">
               <div className="flex items-center space-y-2 flex-col">
-                <UserPlus className="cursor-pointer w-6 h-6 hover:text-accent" />
+                <UserPlus className="cursor-pointer w-6 h-6 hover:text-primary" />
                 <span className="text-xs">Inscription</span>
               </div>
             </button>
@@ -172,7 +178,7 @@ export const Auth = () => {
           onClick={() => redirectTo("/cart")}
           className="hover:scale-110 cursor-pointer w-6 h-6 flex items-center justify-center mx-2">
           <div className="flex items-center space-y-2 flex-col">
-            <ShoppingCart className="w-6 h-6 hover:text-accent" />
+            <ShoppingCart className="w-6 h-6 hover:text-primary" />
             <span className="text-xs">Panier</span>
           </div>
         </button>

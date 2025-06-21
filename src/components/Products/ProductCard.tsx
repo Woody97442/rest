@@ -1,7 +1,7 @@
 import { Product } from "@/Types/ProductType";
 import React, { useState } from "react";
 import { motion } from "framer-motion"; // Importer motion de Framer Motion
-import { CheckCircle2, ShoppingCart } from "lucide-react";
+import { ShoppingCart } from "lucide-react";
 import { CartService } from "@/services/cart.service";
 import { ParseJwt } from "@/tools/tools";
 
@@ -16,18 +16,19 @@ export const ProductCard: React.FC<ProductCardProps> = ({
 }) => {
   const [isAdding, setIsAdding] = useState(false);
   const [addedToCart, setAddedToCart] = useState(false);
+  const [error, setError] = useState("");
 
   const handleAddToCart = async (productId: number) => {
     try {
       const token = localStorage.getItem("token");
       if (!token) {
-        console.warn("Utilisateur non connecté.");
+        setError("Utilisateur non connecté.");
         return;
       }
 
       const userId = ParseJwt(token).id;
       if (!userId) {
-        console.warn("ID utilisateur non trouvé dans le token.");
+        setError("ID utilisateur non rencontré dans le token.");
         return;
       }
       setIsAdding(true);
@@ -59,29 +60,33 @@ export const ProductCard: React.FC<ProductCardProps> = ({
         src={product.images[0]}
         alt={product.name}
         onClick={onClick}
-        className="w-full h-auto object-cover rounded-t-lg"
+        className="w-full h-[200px] object-contain rounded-t-lg"
       />
-      <div className="p-4">
+      <div className="p-4 ">
         <h3 className="text-lg font-semibold">{product.name}</h3>
         <p className="text-sm text-gray-600">{product.shortDescription}</p>
 
         <div className="flex items-center justify-between mt-2">
-          <span className="text-pink-600 font-bold">
-            {product.price.toFixed(2)} € /jour
+          <span className="text-secondary font-bold text-2xl">
+            {product.price.toFixed(2)} €
           </span>
-          <span className="text-yellow-500">{"★".repeat(product.rating)}</span>
+          <div className="flex items-center space-x-2">
+            <span className="text-yellow-500">{product.rating}</span>
+            <span className="text-yellow-500">
+              {"★".repeat(product.rating)}
+            </span>
+          </div>
         </div>
 
-        <p className="text-xs text-gray-400 my-2">{product.country}</p>
-
         {/* Bouton Ajouter au panier */}
+        {error && <p className="text-red-500 mb-2">{error}</p>}
         <button
           onClick={() => handleAddToCart(product.id)}
           disabled={isAdding}
-          className={`mt-4 w-full flex items-center justify-center gap-2 font-semibold py-2 px-4 rounded-lg shadow transition duration-200 ${
+          className={`cursor-pointer hover:scale-105 mt-4 w-auto flex mx-auto items-center justify-center gap-2 font-semibold py-2 px-4 rounded-lg shadow transition duration-200 ${
             isAdding
               ? "bg-gray-400 cursor-not-allowed"
-              : "bg-pink-600 hover:bg-pink-700 text-white"
+              : "bg-primary hover:bg-secondary text-white"
           }`}>
           {addedToCart ? (
             <>En cours...</>

@@ -19,9 +19,6 @@ export function ParseJwt(token: string) {
 export function parseProductValue(product: Product) {
   return {
     ...product,
-    likes: safeParseJsonArray(product.likes),
-    dislikes: safeParseJsonArray(product.dislikes),
-    preferences: safeParseJsonArray(product.preferences),
     images: safeParseJsonArray(product.images),
     createdAt: new Date(product.createdAt),
     updatedAt: new Date(product.updatedAt),

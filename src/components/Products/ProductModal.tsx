@@ -1,6 +1,10 @@
-import React from "react";
+import React, { useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { Product } from "@/Types/ProductType";
+import { XMarkIcon } from "@heroicons/react/24/solid";
+import { ShoppingCart } from "lucide-react";
+import { ParseJwt } from "@/tools/tools";
+import { CartService } from "@/services/cart.service";
 
 interface ProductModalProps {
   product: Product;
@@ -13,6 +17,41 @@ export const ProductModal: React.FC<ProductModalProps> = ({
   isOpen,
   onClose,
 }) => {
+  const [isAdding, setIsAdding] = useState(false);
+  const [addedToCart, setAddedToCart] = useState(false);
+  const [error, setError] = useState("");
+
+  const handleAddToCart = async (productId: number) => {
+    try {
+      const token = localStorage.getItem("token");
+      if (!token) {
+        setError("Utilisateur non connecté.");
+        return;
+      }
+
+      const userId = ParseJwt(token).id;
+      if (!userId) {
+        setError("ID utilisateur non trouvé dans le token.");
+        return;
+      }
+      setIsAdding(true);
+      const res = await CartService.addToCart(userId, productId, token);
+
+      if (res.success) {
+        setAddedToCart(true);
+        setTimeout(() => {
+          setAddedToCart(false);
+          setIsAdding(false);
+        }, 2000);
+      } else {
+        console.error("❌ Échec ajout panier :", res.message);
+        setIsAdding(false);
+      }
+    } catch (err) {
+      console.error("❌ Erreur lors de l'ajout au panier :", err);
+    }
+  };
+
   return (
     <AnimatePresence>
       {isOpen && (
@@ -29,61 +68,39 @@ export const ProductModal: React.FC<ProductModalProps> = ({
             transition={{ duration: 0.25 }}>
             <button
               onClick={onClose}
-              className="absolute top-4 right-4 text-gray-600 hover:text-gray-900 text-2xl">
-              &times;
+              className="absolute cursor-pointer hover:scale-110 top-4 right-4 text-gray-600 hover:text-gray-900">
+              <XMarkIcon className="w-8 h-8 text-white bg-black rounded-full shadow-md" />
             </button>
 
-            <h2 className="text-2xl font-bold mb-4">{product.name}</h2>
             <img
               src={product.images[0]}
               alt={product.name}
-              className="w-full h-auto object-cover rounded-lg mb-4"
+              className="w-full h-[200px] object-contain rounded-lg mb-4"
             />
             <p className="text-sm text-gray-700 mb-2">{product.description}</p>
-            <p className="text-sm text-gray-500 mb-2">
-              <strong>Spécialité :</strong> {product.specialty}
-            </p>
-            <p className="text-sm text-gray-500 mb-2">
-              <strong>Pays :</strong> {product.country}
-            </p>
-            <p className="text-sm text-gray-500 mb-2">
+            <p className="text-yellow-500 ">{"★".repeat(product.rating)}</p>
+            <p className="text-xl text-gray-500 mb-2">
               <strong>Prix :</strong> {product.price.toFixed(2)} €
             </p>
-            <p className="text-yellow-500 mb-4">{"★".repeat(product.rating)}</p>
-
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-4 text-sm">
-              <div>
-                <h4 className="font-semibold text-pink-600 mb-1">
-                  Préférences
-                </h4>
-                <ul className="list-disc list-inside text-gray-700">
-                  {product.preferences &&
-                    product.preferences.map((pref, idx) => (
-                      <li key={idx}>{pref}</li>
-                    ))}
-                </ul>
-              </div>
-              <div>
-                <h4 className="font-semibold text-green-600 mb-1">
-                  Ce qu'elle aime
-                </h4>
-                <ul className="list-disc list-inside text-gray-700">
-                  {product.likes &&
-                    product.likes.map((like, idx) => <li key={idx}>{like}</li>)}
-                </ul>
-              </div>
-              <div>
-                <h4 className="font-semibold text-red-600 mb-1">
-                  Ce qu'elle n'aime pas
-                </h4>
-                <ul className="list-disc list-inside text-gray-700">
-                  {product.dislikes &&
-                    product.dislikes.map((dislike, idx) => (
-                      <li key={idx}>{dislike}</li>
-                    ))}
-                </ul>
-              </div>
-            </div>
+            {/* Bouton Ajouter au panier */}
+            {error && <p className="text-red-500 mb-2">{error}</p>}
+            <button
+              onClick={() => handleAddToCart(product.id)}
+              disabled={isAdding}
+              className={`cursor-pointer hover:scale-110 w-auto mx-auto flex items-center justify-center gap-2 font-semibold py-2 px-4 rounded-lg shadow transition duration-200 ${
+                isAdding
+                  ? "bg-gray-400 cursor-not-allowed"
+                  : "bg-primary hover:bg-secondary text-white"
+              }`}>
+              {addedToCart ? (
+                <>En cours...</>
+              ) : (
+                <>
+                  <ShoppingCart className="w-4 h-4" />
+                  Ajouter au panier
+                </>
+              )}
+            </button>
           </motion.div>
         </motion.div>
       )}

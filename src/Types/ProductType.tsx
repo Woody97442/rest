@@ -1,27 +1,28 @@
 export type CartItem = {
   itemId: number;
   product: Product;
-  days: number;
+  quantity: number;
   unitPrice: number;
 };
 export type Product = {
   id: number;
-  name: string;
   reference: string;
-  shortDescription?: string;
-  description?: string;
+  categoryId: number;
+  description: string;
+  images: string[];
+  name: string;
   price: number;
   rating: number;
-  country?: string;
-  specialty?: string;
-  preferences?: string[];
-  likes?: string[];
-  dislikes?: string[];
+  shortDescription: string;
   stock: number;
-  images: string[];
-  cartItems: CartItem[];
-  createdAt: Date;
+  category: {
+    id: number;
+    name: string;
+    slug: string;
+    reference: string;
+  };
   updatedAt: Date;
+  createdAt: Date;
 };
 
 export type Cart = {
